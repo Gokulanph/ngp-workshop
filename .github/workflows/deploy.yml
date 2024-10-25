@@ -35,34 +35,27 @@ jobs:
     
     - name: Setup Pages
       uses: actions/configure-pages@v4
-      
+
+    - name: Install Dependencies
+      run: npm ci  # Install dependencies
+
+    - name: Build Project
+      run: npm run build  # Run the build script defined in package.json
+
     - name: Replace Configuration
       run: |
-        sed -i 's/#{GITHUB_NAME}#/${{ secrets.GITHUB_NAME }}/g' js/config.js
-        sed -i 's/#{GITHUB_TITLE}#/${{ secrets.GITHUB_TITLE }}/g' js/config.js
-        sed -i 's/#{GITHUB_BIO}#/${{ secrets.GITHUB_BIO }}/g' js/config.js
-        sed -i 's/#{GITHUB_LOCATION}#/${{ secrets.GITHUB_LOCATION }}/g' js/config.js
-        sed -i 's/#{GITHUB_EMAIL}#/${{ secrets.GITHUB_EMAIL }}/g' js/config.js
-        sed -i 's/#{GITHUB_IMAGE}#/${{ secrets.GITHUB_IMAGE }}/g' js/config.js
+        sed -i 's/#{GITHUB_NAME}#/${{ secrets.GITHUB_NAME }}/g' dist/js/config.js
+        sed -i 's/#{GITHUB_TITLE}#/${{ secrets.GITHUB_TITLE }}/g' dist/js/config.js
+        sed -i 's/#{GITHUB_BIO}#/${{ secrets.GITHUB_BIO }}/g' dist/js/config.js
+        sed -i 's/#{GITHUB_LOCATION}#/${{ secrets.GITHUB_LOCATION }}/g' dist/js/config.js
+        sed -i 's/#{GITHUB_EMAIL}#/${{ secrets.GITHUB_EMAIL }}/g' dist/js/config.js
+        sed -i 's/#{GITHUB_IMAGE}#/${{ secrets.GITHUB_IMAGE }}/g' dist/js/config.js
       
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3
       with:
-        path: '.'
+        path: '.' 
         
     - name: Deploy to GitHub Pages
       id: deployment
       uses: actions/deploy-pages@v4
-      
-    # - name: Send email
-    #   if: success()
-    #   uses: dawidd6/action-send-mail@v3
-    #   with:
-    #     server_address: smtp.gmail.com
-    #     server_port: 465
-    #     username: ${{ secrets.EMAIL_USERNAME }}
-    #     password: ${{ secrets.EMAIL_PASSWORD }}
-    #     subject: Deployment Success
-    #     body: The profile page has been successfully deployed to GitHub Pages
-    #     to: ${{ secrets.NOTIFICATION_EMAIL }}
-    #     from: GitHub Actions
