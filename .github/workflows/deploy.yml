@@ -22,7 +22,7 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     environment:
-      name: github-page
+      name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     
     permissions:
