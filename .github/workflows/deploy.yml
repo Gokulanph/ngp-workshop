@@ -44,6 +44,9 @@ jobs:
 
     - name: Replace Configuration
       run: |
+         if [ -z "${{ secrets.USER_NAME }}" ]; then
+          echo "Warning: USER_NAME secret is empty"
+        fi
         sed -i 's/#{GITHUB_NAME}#/${{ secrets.USER_NAME }}/g' dist/js/config.js
         sed -i 's/#{GITHUB_TITLE}#/${{ secrets.TITLE }}/g' dist/js/config.js
         sed -i 's/#{GITHUB_BIO}#/${{ secrets.BIO }}/g' dist/js/config.js
