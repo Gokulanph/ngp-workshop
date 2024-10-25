@@ -44,7 +44,7 @@ jobs:
 
     - name: Replace Configuration
       run: |
-        sed -i 's/#{GITHUB_NAME}#/${{ secrets.GITHUB_NAME }}/g' dist/js/config.js
+        sed -i 's/#{GITHUB_NAME}#/${{ secrets.GITHUB_NAME }}/g' js/config.js
         sed -i 's/#{GITHUB_TITLE}#/${{ secrets.GITHUB_TITLE }}/g' dist/js/config.js
         sed -i 's/#{GITHUB_BIO}#/${{ secrets.GITHUB_BIO }}/g' dist/js/config.js
         sed -i 's/#{GITHUB_LOCATION}#/${{ secrets.GITHUB_LOCATION }}/g' dist/js/config.js
