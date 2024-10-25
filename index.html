@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Developer Profile</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <!-- Added environment indicator for development -->
+    <style>
+        .env-indicator {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            border-radius: 5px;
+            background-color: #22c55e;
+            color: white;
+            font-size: 12px;
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <!-- Environment indicator -->
+    <div id="env-indicator" class="env-indicator">Development Mode</div>
+
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
+            <div class="p-8">
+                <div class="text-center">
+                    <img id="profile-image" src="/api/placeholder/150/150" alt="Profile" class="rounded-full mx-auto mb-4 w-32 h-32">
+                    <h1 id="name" class="text-2xl font-bold text-gray-900 mb-2"></h1>
+                    <p id="title" class="text-gray-600 mb-4"></p>
+                </div>
+                <div id="bio" class="text-gray-700 mb-6"></div>
+                <div class="grid grid-cols-2 gap-4 text-center">
+                    <div class="bg-gray-50 p-4 rounded">
+                        <h3 class="font-semibold">Location</h3>
+                        <p id="location"></p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded">
+                        <h3 class="font-semibold">Email</h3>
+                        <p id="email"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="js/config.js"></script>
+    <script src="js/profile.js"></script>
+    <script>
+        // Show environment indicator in development
+        if (window.config.name === 'John Doe') {
+            document.getElementById('env-indicator').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
