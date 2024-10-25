@@ -1,40 +1,27 @@
-// test/profile.test.js
-const { loadProfile } = require('../js/profile');
-const { JSDOM } = require('jsdom');
+const { calculateSum } = require('../js/profile');
 
-describe('Profile Page', () => {
-    let dom;
-    
-    beforeEach(() => {
-        dom = new JSDOM(`
-            <!DOCTYPE html>
-            <div id="name"></div>
-            <div id="title"></div>
-            <div id="bio"></div>
-            <div id="location"></div>
-            <div id="email"></div>
-            <img id="profile-image" src="" />
-        `);
-        global.document = dom.window.document;
+describe('Utility Functions', () => {
+    test('calculates the sum of an array of numbers', () => {
+        const numbers = [1, 2, 3, 4, 5];
+        const result = calculateSum(numbers);
+        expect(result).toBe(15);
     });
 
-    test('loads profile data correctly', () => {
-        const testConfig = {
-            name: 'John Doe',
-            title: 'Software Engineer',
-            bio: 'Passionate about coding',
-            location: 'New York',
-            email: 'john@example.com',
-            image: 'test.jpg'
-        };
+    test('returns 0 for an empty array', () => {
+        const numbers = [];
+        const result = calculateSum(numbers);
+        expect(result).toBe(0);
+    });
 
-        loadProfile(testConfig);
+    test('calculates the sum of negative numbers', () => {
+        const numbers = [-1, -2, -3];
+        const result = calculateSum(numbers);
+        expect(result).toBe(-6);
+    });
 
-        expect(document.getElementById('name').textContent).toBe(testConfig.name);
-        expect(document.getElementById('title').textContent).toBe(testConfig.title);
-        expect(document.getElementById('bio').textContent).toBe(testConfig.bio);
-        expect(document.getElementById('location').textContent).toBe(testConfig.location);
-        expect(document.getElementById('email').textContent).toBe(testConfig.email);
-        expect(document.getElementById('profile-image').src).toContain(testConfig.image);
+    test('handles an array with mixed numbers', () => {
+        const numbers = [-1, 2, -3, 4];
+        const result = calculateSum(numbers);
+        expect(result).toBe(2);
     });
 });

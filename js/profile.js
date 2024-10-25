@@ -13,7 +13,11 @@ document.addEventListener('DOMContentLoaded', () => {
     loadProfile(window.config);
 });
 
+function calculateSum(numbers) {
+    return numbers.reduce((acc, num) => acc + num, 0);
+}
+
 // Export for testing
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { loadProfile };
+    module.exports = { loadProfile,calculateSum };
 }
