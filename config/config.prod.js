@@ -1,8 +1,8 @@
 window.config = {
-    name: '#{GITHUB_NAME}#',
-    title: '#{GITHUB_TITLE}#',
-    bio: '#{GITHUB_BIO}#',
-    location: '#{GITHUB_LOCATION}#',
-    email: '#{GITHUB_EMAIL}#',
-    image: '#{GITHUB_IMAGE}#'
-};
+    name: "#{USER_NAME}#",
+    title: "#{USER_TITLE}#",
+    bio: "#{USER_BIO}#",
+    location: "#{USER_LOCATION}#",
+    email: "#{USER_EMAIL}#",
+    image: "#{USER_IMAGE}#"
+  };

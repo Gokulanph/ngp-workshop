@@ -1,4 +1,3 @@
-# .github/workflows/deploy.yml
 name: Deploy to GitHub Pages
 
 on:
@@ -23,7 +22,7 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     environment:
-      name: production
+      name: github-page
       url: ${{ steps.deployment.outputs.page_url }}
     
     permissions:
@@ -37,27 +36,49 @@ jobs:
       uses: actions/configure-pages@v4
 
     - name: Install Dependencies
-      run: npm ci  # Install dependencies
+      run: npm ci
 
     - name: Build Project
-      run: npm run build  # Run the build script defined in package.json
+      run: npm run build
+
+    - name: Check Config File Before
+      run: |
+        echo "Content before replacement:"
+        cat dist/js/config.js
 
     - name: Replace Configuration
       run: |
-        if [ -z "${{ secrets.USER_NAME }}" ]; then
-          echo "Warning: USER_NAME secret is empty"
-        fi
-        sed -i 's/#{GITHUB_NAME}#/${{ secrets.USER_NAME }}/g' dist/js/config.js
-        sed -i 's/#{GITHUB_TITLE}#/${{ secrets.TITLE }}/g' dist/js/config.js
-        sed -i 's/#{GITHUB_BIO}#/${{ secrets.BIO }}/g' dist/js/config.js
-        sed -i 's/#{GITHUB_LOCATION}#/${{ secrets.LOCATION }}/g' dist/js/config.js
-        sed -i 's/#{GITHUB_EMAIL}#/${{ secrets.EMAIL }}/g' dist/js/config.js
-        sed -i 's/#{GITHUB_IMAGE}#/${{ secrets.IMAGE }}/g' dist/js/config.js
+        # Create a temporary file with properly escaped values
+        echo 'NAME="${{ secrets.USER_NAME }}"' > tmp_vars
+        echo 'TITLE="${{ secrets.TITLE }}"' >> tmp_vars
+        echo 'BIO="${{ secrets.BIO }}"' >> tmp_vars
+        echo 'LOCATION="${{ secrets.LOCATION }}"' >> tmp_vars
+        echo 'EMAIL="${{ secrets.EMAIL }}"' >> tmp_vars
+        echo 'IMAGE="${{ secrets.IMAGE }}"' >> tmp_vars
+        
+        # Source the variables
+        source tmp_vars
+        
+        # Perform replacements with proper quoting
+        sed -i "s|#{USER_NAME}#|$NAME|g" dist/js/config.js
+        sed -i "s|#{USER_TITLE}#|$TITLE|g" dist/js/config.js
+        sed -i "s|#{USER_BIO}#|$BIO|g" dist/js/config.js
+        sed -i "s|#{USER_LOCATION}#|$LOCATION|g" dist/js/config.js
+        sed -i "s|#{USER_EMAIL}#|$EMAIL|g" dist/js/config.js
+        sed -i "s|#{USER_IMAGE}#|$IMAGE|g" dist/js/config.js
+        
+        # Clean up
+        rm tmp_vars
+
+    - name: Check Config File After
+      run: |
+        echo "Content after replacement:"
+        cat dist/js/config.js
       
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3
       with:
-        path: '.' 
+        path: 'dist'
         
     - name: Deploy to GitHub Pages
       id: deployment
