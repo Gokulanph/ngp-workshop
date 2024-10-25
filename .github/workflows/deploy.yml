@@ -1,0 +1,68 @@
+# .github/workflows/deploy.yml
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ feature/test ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16.x'
+    - run: npm ci
+    - run: npm test
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: ${{ steps.deployment.outputs.page_url }}
+    
+    permissions:
+      pages: write
+      id-token: write
+    
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Setup Pages
+      uses: actions/configure-pages@v4
+      
+    - name: Replace Configuration
+      run: |
+        sed -i 's/#{GITHUB_NAME}#/${{ secrets.GITHUB_NAME }}/g' js/config.js
+        sed -i 's/#{GITHUB_TITLE}#/${{ secrets.GITHUB_TITLE }}/g' js/config.js
+        sed -i 's/#{GITHUB_BIO}#/${{ secrets.GITHUB_BIO }}/g' js/config.js
+        sed -i 's/#{GITHUB_LOCATION}#/${{ secrets.GITHUB_LOCATION }}/g' js/config.js
+        sed -i 's/#{GITHUB_EMAIL}#/${{ secrets.GITHUB_EMAIL }}/g' js/config.js
+        sed -i 's/#{GITHUB_IMAGE}#/${{ secrets.GITHUB_IMAGE }}/g' js/config.js
+      
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: '.'
+        
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
+      
+    # - name: Send email
+    #   if: success()
+    #   uses: dawidd6/action-send-mail@v3
+    #   with:
+    #     server_address: smtp.gmail.com
+    #     server_port: 465
+    #     username: ${{ secrets.EMAIL_USERNAME }}
+    #     password: ${{ secrets.EMAIL_PASSWORD }}
+    #     subject: Deployment Success
+    #     body: The profile page has been successfully deployed to GitHub Pages
+    #     to: ${{ secrets.NOTIFICATION_EMAIL }}
+    #     from: GitHub Actions
