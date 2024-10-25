@@ -1,34 +1,33 @@
-// scripts/build.js
 const fs = require('fs-extra');
 const path = require('path');
 
 async function build() {
     const env = process.env.NODE_ENV || 'production';
-    
+
     // Create dist directory
     await fs.ensureDir('dist');
-    
-    // Copy all files except configs and the dist directory itself
-    await fs.copy('.', 'dist', {
-        filter: (src) => {
-            const basePath = path.resolve('.');  // Get the base directory
-            return !src.startsWith(path.join(basePath, 'dist')) &&  // Exclude dist directory
-                   !src.includes('config') && 
-                   !src.includes('node_modules') &&
-                   !src.includes('test') &&
-                   !src.includes('scripts') &&
-                   !src.endsWith('package.json') &&
-                   !src.endsWith('package-lock.json');
-        }
-    });
+
+    // Define directories and files to copy
+    const itemsToCopy = [
+        'js',
+        'index.html',
+        // Add other directories/files you need
+    ];
+
+    // Copy each item to dist
+    for (const item of itemsToCopy) {
+        await fs.copy(item, path.join('dist', item)).catch(err => {
+            console.error(`Error copying ${item}:`, err);
+        });
+    }
 
     // Copy appropriate config file
-    const configSource = env === 'development' 
-        ? 'config/config.dev.js' 
+    const configSource = env === 'development'
+        ? 'config/config.dev.js'
         : 'config/config.prod.js';
-    
+
     await fs.copy(configSource, 'dist/js/config.js');
-    
+
     console.log(`Built for ${env} environment`);
 }
 
