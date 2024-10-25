@@ -8,13 +8,14 @@ async function build() {
     // Create dist directory
     await fs.ensureDir('dist');
     
-    // Copy all files except configs
+    // Copy all files except configs and the dist directory
     await fs.copy('.', 'dist', {
         filter: (src) => {
             return !src.includes('config') && 
                    !src.includes('node_modules') &&
                    !src.includes('test') &&
                    !src.includes('scripts') &&
+                   !src.includes('dist') &&  // Exclude dist directory
                    !src.endsWith('package.json') &&
                    !src.endsWith('package-lock.json');
         }
