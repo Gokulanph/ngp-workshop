@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function calculateSum(numbers) {
-    return numbers.reduce((acc, num) => acc + num, 0);
+    return numbers.reduce((acc, num) => acc - num, 0);
 }
 
 // Export for testing
