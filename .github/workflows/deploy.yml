@@ -1,0 +1,85 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ feature/test ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16.x'
+    - run: npm ci
+    - run: npm test
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    
+    permissions:
+      pages: write
+      id-token: write
+    
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Setup Pages
+      uses: actions/configure-pages@v4
+
+    - name: Install Dependencies
+      run: npm ci
+
+    - name: Build Project
+      run: npm run build
+
+    - name: Check Config File Before
+      run: |
+        echo "Content before replacement:"
+        cat dist/js/config.js
+
+    - name: Replace Configuration
+      run: |
+        # Create a temporary file with properly escaped values
+        echo 'NAME="${{ secrets.USER_NAME }}"' > tmp_vars
+        echo 'TITLE="${{ secrets.TITLE }}"' >> tmp_vars
+        echo 'BIO="${{ secrets.BIO }}"' >> tmp_vars
+        echo 'LOCATION="${{ secrets.LOCATION }}"' >> tmp_vars
+        echo 'EMAIL="${{ secrets.EMAIL }}"' >> tmp_vars
+        echo 'IMAGE="${{ secrets.IMAGE }}"' >> tmp_vars
+        
+        # Source the variables
+        source tmp_vars
+        
+        # Perform replacements with proper quoting
+        sed -i "s|#{USER_NAME}#|$NAME|g" dist/js/config.js
+        sed -i "s|#{USER_TITLE}#|$TITLE|g" dist/js/config.js
+        sed -i "s|#{USER_BIO}#|$BIO|g" dist/js/config.js
+        sed -i "s|#{USER_LOCATION}#|$LOCATION|g" dist/js/config.js
+        sed -i "s|#{USER_EMAIL}#|$EMAIL|g" dist/js/config.js
+        sed -i "s|#{USER_IMAGE}#|$IMAGE|g" dist/js/config.js
+        
+        # Clean up
+        rm tmp_vars
+
+    - name: Check Config File After
+      run: |
+        echo "Content after replacement:"
+        cat dist/js/config.js
+      
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: 'dist'
+        
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
